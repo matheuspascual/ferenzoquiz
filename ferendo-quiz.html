@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descubra seu perfume | Ferenzo Perfumes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D5B0;
+  --dark:#1A1410;--dark2:#2C2318;
+  --cream:#F7F2EA;--cream2:#EDE5D8;
+  --text:#3A2E22;--muted:#8A7A6A;
+  --radius:2px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 10% 20%,rgba(201,169,110,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 80%,rgba(201,169,110,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+#app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:2rem 1.5rem 4rem;min-height:100vh;width:100%}
+
+.brand{text-align:center;padding:2.5rem 0 3rem}
+.brand img{height:40px;width:auto;mix-blend-mode:multiply}
+.brand-sub{font-size:.68rem;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-top:.7rem}
+.brand-line{width:50px;height:1px;background:var(--gold);margin:1.1rem auto 0;opacity:.5}
+
+.progress-wrap{margin-bottom:2.5rem}
+.progress-label{display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.progress-track{height:1px;background:var(--cream2);position:relative;overflow:hidden}
+.progress-fill{position:absolute;left:0;top:0;bottom:0;background:var(--gold);transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+.screen{display:none;animation:fadeUp .45s ease both}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.intro-eyebrow{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.intro-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,3.2rem);font-weight:300;line-height:1.2;color:var(--dark);margin-bottom:1.5rem}
+.intro-title em{font-style:italic;color:var(--gold)}
+.intro-body{font-size:.92rem;line-height:1.85;color:var(--muted);max-width:480px;margin-bottom:2.8rem}
+.intro-meta{display:flex;gap:2rem;margin-bottom:3rem}
+.meta-item{display:flex;flex-direction:column;gap:.2rem}
+.meta-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--gold);line-height:1}
+.meta-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.intro-divider{width:100%;height:1px;background:var(--cream2);margin-bottom:3rem}
+
+.btn-primary{display:inline-flex;align-items:center;gap:.8rem;background:var(--dark);color:var(--gold-light);font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:1.1rem 2.4rem;border:none;cursor:pointer;border-radius:var(--radius);transition:background .2s,transform .15s;text-decoration:none}
+.btn-primary:hover{background:var(--dark2);transform:translateY(-1px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:.6rem;background:none;border:1px solid var(--cream2);color:var(--muted);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;padding:.8rem 1.6rem;cursor:pointer;border-radius:var(--radius);transition:border-color .2s,color .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-back{display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--muted);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:0;transition:color .2s}
+.btn-back:hover{color:var(--gold)}
+
+.q-eyebrow{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:300;color:var(--dark);line-height:1.3;margin-bottom:2.2rem}
+.q-options{display:flex;flex-direction:column;gap:.75rem;margin-bottom:2.5rem}
+.option{display:flex;align-items:center;gap:1.2rem;padding:1.1rem 1.4rem;border:1px solid var(--cream2);background:white;cursor:pointer;border-radius:var(--radius);transition:border-color .2s,background .2s,transform .15s;text-align:left;font-family:'Jost',sans-serif;width:100%}
+.option:hover{border-color:var(--gold);background:#FFFCF8;transform:translateX(4px)}
+.option.selected{border-color:var(--gold);background:#FBF6EE}
+.option.selected .opt-dot{background:var(--gold)}
+.opt-dot{width:8px;height:8px;border-radius:50%;border:1px solid var(--gold);flex-shrink:0;transition:background .2s}
+.opt-icon{font-size:1.3rem;flex-shrink:0}
+.opt-text{display:flex;flex-direction:column;gap:.15rem}
+.opt-label{font-size:.9rem;font-weight:400;color:var(--text);line-height:1.3}
+.opt-sub{font-size:.75rem;color:var(--muted);font-style:italic}
+.q-nav{display:flex;align-items:center;justify-content:space-between}
+.btn-next{display:inline-flex;align-items:center;gap:.7rem;background:var(--dark);color:var(--gold-light);font-family:'Jost',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:.95rem 2rem;border:none;cursor:pointer;border-radius:var(--radius);transition:all .2s;opacity:.3;pointer-events:none}
+.btn-next.ready{opacity:1;pointer-events:all}
+.btn-next.ready:hover{background:var(--dark2);transform:translateY(-1px)}
+
+.result-header{text-align:center;margin-bottom:2.5rem}
+.result-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
+.result-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,6vw,3rem);font-weight:300;color:var(--dark);line-height:1.1;margin-bottom:.4rem}
+.result-title em{font-style:italic;color:var(--gold)}
+.result-subtitle{font-size:.8rem;color:var(--muted);letter-spacing:.06em}
+.result-card{background:white;border:1px solid var(--cream2);border-radius:var(--radius);overflow:hidden;margin-bottom:2rem}
+.result-img-wrap{width:100%;height:300px;background:linear-gradient(135deg,var(--cream) 0%,var(--cream2) 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.result-img-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,169,110,.12) 0%,transparent 70%)}
+.result-img{max-height:240px;max-width:75%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 8px 28px rgba(0,0,0,.14))}
+.result-img-fallback{font-size:4rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;position:relative;z-index:1}
+.result-body{padding:2rem 2rem 2.5rem}
+.result-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.tag{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.3rem .8rem;border:1px solid var(--gold);color:var(--gold);border-radius:99px}
+.tag.dark{background:var(--dark);border-color:var(--dark);color:var(--gold-light)}
+.result-name{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--dark);margin-bottom:.25rem;line-height:1}
+.result-inspired{font-size:.78rem;color:var(--muted);letter-spacing:.08em;margin-bottom:1.5rem}
+.result-divider{height:1px;background:var(--cream2);margin-bottom:1.5rem}
+.result-notes-title{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.result-desc{font-size:.9rem;line-height:1.85;color:var(--text);margin-bottom:1.8rem;white-space:pre-line}
+.result-price{display:flex;align-items:baseline;gap:.5rem;margin-bottom:1.8rem;flex-wrap:wrap}
+.price-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price-val{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--dark)}
+.price-alt{font-size:.85rem;color:var(--muted)}
+.btn-buy{display:flex;align-items:center;justify-content:center;gap:.8rem;background:var(--dark);color:var(--gold-light);font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:1.2rem 2rem;border:none;cursor:pointer;border-radius:var(--radius);text-decoration:none;transition:background .2s,transform .15s;width:100%}
+.btn-buy:hover{background:var(--dark2);transform:translateY(-1px)}
+.result-restart{text-align:center;padding-top:1rem}
+
+.footer-note{text-align:center;margin-top:3rem;font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.footer-note a{color:var(--gold);text-decoration:none}
+
+@media(max-width:480px){
+  #app{padding:1.5rem 1rem 3rem}
+  .intro-meta{gap:1.2rem}
+  .result-body{padding:1.5rem 1.5rem 2rem}
+  .result-img-wrap{height:240px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="brand-line"></div>
+  </div>
+
+  <div class="screen active" id="screen-intro">
+    <div class="intro-eyebrow">Encontre sua fragrância</div>
+    <h1 class="intro-title">Qual perfume foi<br><em>feito para você?</em></h1>
+    <p class="intro-body">Responda algumas perguntas rápidas e descubra a fragrância Ferenzo que mais combina com sua personalidade, estilo e momento de vida.</p>
+    <div class="intro-divider"></div>
+    <div class="intro-meta">
+      <div class="meta-item"><span class="meta-num">5</span><span class="meta-label">Perguntas</span></div>
+      <div class="meta-item"><span class="meta-num">22</span><span class="meta-label">Fragrâncias</span></div>
+      <div class="meta-item"><span class="meta-num">2'</span><span class="meta-label">Tempo</span></div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">
+      Iniciar quiz
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="screen" id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="prog-text">Pergunta 1 de 5</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-eyebrow" id="q-eyebrow"></div>
+    <h2 class="q-text" id="q-text"></h2>
+    <div class="q-options" id="q-options"></div>
+    <div class="q-nav">
+      <button class="btn-back" id="btn-back" onclick="prevQ()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Voltar
+      </button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">
+        <span id="next-label">Próxima</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result"></div>
+
+  <div class="footer-note">
+    Ferenzo Perfumes &mdash; <a href="https://www.ferenzoperfumes.com.br" target="_blank">ferenzoperfumes.com.br</a>
+  </div>
+</div>
+
+<script>
+const perfumes = [
+  {nome:"DESTINO",desc:"Notas: Íris, ambreta, açafrão e almíscar.\nOcasião: Sofisticado para encontros noturnos e eventos elegantes.",inspirado:"My Self · Yves Saint Laurent",familia:"Amadeirado Floral",genero:"him",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/destino/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3d54d6e99/destino-698e9c57e2ae7.png",tags:["amadeirado","floral","noturno","elegante","marcante","sedutor"]},
+  {nome:"LEONE",desc:"Notas: Hortelã, maçã verde, fava tonka e baunilha.\nOcasião: Noite, festas, encontros — marcante e sedutor.",inspirado:"Eros · Versace",familia:"Aromático Fougère",genero:"him",p60:149,p100:129,link:"https://www.ferenzoperfumes.com.br/leone/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3cb7dd516/leone-698e9b25b98d6.png",tags:["aromático","noturno","sedutor","marcante","festas","poder"]},
+  {nome:"VENTO DI MARE",desc:"Notas: Limão, bergamota, jasmim, almíscar.\nOcasião: Dia a dia, calor, eventos ao ar livre.",inspirado:"Acqua di Gio · Giorgio Armani",familia:"Aromático Aquático",genero:"him",p60:149,p100:129,link:"https://www.ferenzoperfumes.com.br/vento-di-mare/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3c35b90a2/13-698e96d5167ff.png",tags:["aquático","cítrico","fresco","diário","verão","energia"]},
+  {nome:"MASSIMO",desc:"Notas: Toranja, incenso, gengibre, cedro e sândalo.\nOcasião: Versátil — trabalho, encontros ou noite sofisticada.",inspirado:"Bleu de Chanel · Chanel",familia:"Amadeirado Aromático",genero:"him",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/massimo/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698bfa3ee6e58/2-698bfb28c61fb.png",tags:["amadeirado","aromático","versátil","trabalho","noturno","elegante","poder"]},
+  {nome:"AURA MARINA",desc:"Notas: Limão, hortelã, jasmim, açúcar mascavo e cedro.\nOcasião: Perfeito para dias quentes e ambientes tropicais.",inspirado:"Acqua di Gioia · Giorgio Armani",familia:"Floral Aquático",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/aura-marina/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3b718c34f/aura-marina-698e9684151ae.png",tags:["floral","aquático","fresco","verão","tropical","energia"]},
+  {nome:"DONATELLA",desc:"Notas: Flor de laranjeira, âmbar, almíscar branco e baunilha.\nOcasião: Dia a dia refinado, encontros românticos.",inspirado:"Paradoxe · Prada",familia:"Âmbar Floral",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/donatella/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3a90e8220/donatellaa-698e9288bc7b8.png",tags:["floral","âmbar","diário","romântico","elegante","sofisticado"]},
+  {nome:"FRANCESCA",desc:"Notas: Lavanda, flor de laranjeira, baunilha e âmbar gris.\nOcasião: Sexy e ousado — perfeito para noite ou eventos marcantes.",inspirado:"Libre · Yves Saint Laurent",familia:"Oriental Fougère",genero:"her",p60:149,p100:129,link:"https://www.ferenzoperfumes.com.br/francesca/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3a0f738d9/francesca-698e8de9bc313.png",tags:["oriental","noturno","sedutor","marcante","poder","ousado"]},
+  {nome:"SERENA",desc:"Notas: Pêra, frésia, âmbar e patchouli.\nOcasião: Leve e elegante — ótimo para primavera e dias claros.",inspirado:"English Pear & Freesia · Jo Malone",familia:"Chipre Frutado",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/serena/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e39812567c/serena-698e874c98151.png",tags:["frutado","chipre","leve","primavera","diário","fresco","energia"]},
+  {nome:"CHIARA",desc:"Notas: Patchouli, jasmim, pimenta rosa e íris.\nOcasião: Feminino e versátil — combina com qualquer ocasião.",inspirado:"Chance Parfum · Chanel",familia:"Chipre Floral",genero:"her",p60:149,p100:129,link:"https://www.ferenzoperfumes.com.br/chiara-698bf81fe40a2/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698bf805e989f/1-698bf7d8129b7.png",tags:["floral","chipre","versátil","feminino","diário","sofisticado"]},
+  {nome:"MARGOT",desc:"Notas: Peônia, rosa, lichia e âmbar.\nOcasião: Dia a dia refinado, escritório, encontros leves.",inspirado:"Eau de Parfum · Chloé",familia:"Floral Amadeirado Musk",genero:"her",p60:149,p100:129,link:"https://www.ferenzoperfumes.com.br/margot/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e392677437/margot-698e43ecd5357.png",tags:["floral","amadeirado","diário","escritório","leve","sofisticado"]},
+  {nome:"CATERINA",desc:"Notas: Açafrão, âmbar gris, jasmim, cedro.\nOcasião: Luxuoso e impactante — eventos noturnos e festas.",inspirado:"Baccarat Rouge 540 · Maison Francis Kurkdjian",familia:"Oriental Floral",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/caterina-inspirado-em-baccarat-rouge/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69bc4c718e9e7/whatsapp-image-2026-04-09-at-11-31-54-69d7b87dc6983.jpeg",tags:["oriental","floral","luxuoso","noturno","festas","marcante","poder"]},
+  {nome:"FIORELLA",desc:"Notas: Aldeídos, almíscar branco, flor de laranjeira, âmbar.\nOcasião: Clean e elegante — ideal para dias especiais ou ambientes sofisticados.",inspirado:"Valaya · Parfums de Marly",familia:"Floral Frutado",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/fiorella/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3ad980ef8/fiorella-698e95b3e95f3.png",tags:["floral","frutado","elegante","sofisticado","diário","clean"]},
+  {nome:"AURORA",desc:"Notas: Rosa turca, ruibarbo, lichia, baunilha.\nOcasião: Extremamente feminino — ótimo para encontros românticos ou jantares.",inspirado:"Delina · Parfums de Marly",familia:"Floral Amadeirado Musk",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/aurora/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3e8be6420/8-698e9eb7bad97.png",tags:["floral","romântico","feminino","noturno","sedutor","marcante"]},
+  {nome:"CAPRI",desc:"Notas: Cítricos luminosos, gengibre, chá preto, ambroxan, madeiras claras.\nOcasião: Sofisticado e moderno — uso diário elegante, trabalho e viagens.",inspirado:"Imagination · Louis Vuitton",familia:"Cítrico Aromático",genero:"all",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/capri/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e3713a042b/capri-caixa-698e42906d458.png",tags:["cítrico","aromático","diário","trabalho","sofisticado","elegante","energia"]},
+  {nome:"VENEZA",desc:"Notas: Floral chipre com toque aquático.\nOcasião: Uso diário feminino, leve e versátil.",inspirado:"Chance Eau Fraîche · Chanel",familia:"Chipre Floral",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/veneza/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/698e37c794d6e/v-698e432dd8258.png",tags:["floral","chipre","fresco","diário","feminino","leve"]},
+  {nome:"HELENA",desc:"Notas: Laranja, bergamota, rosa, jasmim, patchouli, baunilha.\nOcasião: Feminino e elegante — encontros, eventos sociais e uso diário sofisticado.",inspirado:"Coco Mademoiselle · Chanel",familia:"Oriental Floral",genero:"her",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/helena-inspirado-em-coco-mademoiselle/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69ab32b49df17/helena-inspirac-a-o-69bb4b6ccb752.png",tags:["oriental","floral","elegante","social","feminino","sedutor","sofisticado"]},
+  {nome:"AVANT",desc:"Notas: Abacaxi, bergamota, musgo de carvalho, cedro, patchouli, madeiras secas.\nOcasião: Poderoso e marcante — ocasiões especiais e eventos noturnos.",inspirado:"Hacivat · Nishane",familia:"Chipre Amadeirado",genero:"all",p60:null,p100:149,link:"https://www.ferenzoperfumes.com.br/alba-inspirado-em-hacivat-nishane/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69bb4dd82c4df/avant-inspirac-a-o-69bb5a32c24ba.png",tags:["amadeirado","chipre","marcante","noturno","luxuoso","poder","especial"]},
+  {nome:"ABSOLUTO",desc:"Notas: Abacaxi intenso, especiarias quentes, madeiras nobres, âmbar, almíscar.\nOcasião: Luxuoso e dominante — noites, eventos exclusivos e momentos de destaque.",inspirado:"Absolu Aventus · Creed",familia:"Chipre Frutado",genero:"him",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/absoluto-inspirado-em-aventus-absolu-creed/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69ab29db0cff3/absoluto-inspirac-a-o-69bb4b54272b0.png",tags:["frutado","amadeirado","luxuoso","noturno","poder","marcante","especial"]},
+  {nome:"COSTA AZZURA",desc:"Notas: Cítricos frescos, frutas verdes, ervas aromáticas, almíscar, notas aquáticas.\nOcasião: Relaxante e sofisticado — dias quentes, lazer e viagens.",inspirado:"Pacific Chill · Louis Vuitton",familia:"Aromático Frutado",genero:"all",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/costa-azzura-inspirado-em-pacific-chill-louis-vuitton/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69ab26ce1f731/costa-azzura-inspirac-a-o-69bb4aa16ee42.png",tags:["frutado","aromático","fresco","verão","casual","energia"]},
+  {nome:"ALBA",desc:"Notas: Frutas cítricas, frutas doces, âmbar, almíscar branco, baunilha.\nOcasião: Sensual e envolvente — destaque em qualquer ambiente, do dia à noite.",inspirado:"Erba Pura · Xerjoff",familia:"Oriental Frutado",genero:"all",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/lazuli-inspirado-em-erba-pura-xerjoff/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69bb4fcb0c144/alba-inspirac-a-o-69bb58979fcf5.png",tags:["oriental","frutado","sensual","sedutor","noturno","marcante"]},
+  {nome:"LAZULI",desc:"Notas: Limão siciliano, maçã verde, jasmim, bambu, cedro, almíscar.\nOcasião: Refrescante e feminino — verão, uso diário e momentos leves.",inspirado:"Light Blue · Dolce & Gabbana",familia:"Floral Frutado",genero:"all",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/lazuli-inspirado-em-light-blue-dolce-e-gabanna/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69bb592bc23df/lazuli-inspirac-a-o-69bb59ecdc770.png",tags:["floral","frutado","fresco","verão","leve","diário","energia"]},
+  {nome:"SONATA",desc:"Notas: Bergamota, gengibre, notas verdes, flores brancas, madeiras suaves, almíscar.\nOcasião: Vibrante e sofisticado — dia a dia elegante, encontros e ambientes modernos.",inspirado:"Vibrato · Sospiro",familia:"Cítrico Aromático",genero:"all",p60:179,p100:149,link:"https://www.ferenzoperfumes.com.br/sonata-inspirado-em-vibrato-sospiro/",img:"https://sistema.sistemawbuy.com.br/arquivos/adb15a9aa073bac044324adfe49c7444/produtos/69ab2878af20c/sonata-inspirac-a-o-69bb4afc0bd83.png",tags:["cítrico","aromático","vibrante","diário","sofisticado","energia"]}
+];
+
+const questions = [
+  {
+    eyebrow:"Sobre você",
+    text:"Qual é o seu gênero?",
+    key:"genero",
+    options:[
+      {icon:"👔",label:"Masculino",sub:"",value:"him"},
+      {icon:"👗",label:"Feminino",sub:"",value:"her"},
+      {icon:"✨",label:"Sem restrição",sub:"Gosto de explorar os dois",value:"all"}
+    ]
+  },
+  {
+    eyebrow:"Seu estilo",
+    text:"Como você descreveria sua personalidade olfativa?",
+    key:"olfativa",
+    options:[
+      {icon:"🌿",label:"Fresco e leve",sub:"Cítrico, aquático, aromático",tags:["fresco","cítrico","aquático","aromático","leve","energia"]},
+      {icon:"🌸",label:"Floral e delicado",sub:"Flores, romantismo, feminilidade",tags:["floral","romântico","leve","feminino","sofisticado"]},
+      {icon:"🍂",label:"Amadeirado e quente",sub:"Madeiras, incenso, especiarias",tags:["amadeirado","oriental","marcante","sensual","poder"]},
+      {icon:"🍑",label:"Doce e envolvente",sub:"Baunilha, frutas, doce",tags:["frutado","sedutor","noturno","oriental","marcante"]}
+    ]
+  },
+  {
+    eyebrow:"Sua rotina",
+    text:"Quando você mais usa perfume?",
+    key:"ocasiao",
+    options:[
+      {icon:"☀️",label:"Dia a dia e trabalho",sub:"Leveza e presença sutil",tags:["diário","trabalho","fresco","leve","versátil","sofisticado","clean"]},
+      {icon:"🌙",label:"Saídas e noites",sub:"Intensidade e sedução",tags:["noturno","festas","sedutor","marcante","poder"]},
+      {icon:"💕",label:"Encontros e momentos especiais",sub:"Marcante e memorável",tags:["romântico","elegante","marcante","especial","sedutor"]},
+      {icon:"🔄",label:"Qualquer ocasião",sub:"Versatilidade acima de tudo",tags:["versátil","diário","elegante","sofisticado","energia"]}
+    ]
+  },
+  {
+    eyebrow:"Sua essência",
+    text:"O que você quer que o seu perfume transmita?",
+    key:"transmitir",
+    options:[
+      {icon:"💧",label:"Frescor e energia",sub:"Limpo, vibrante, descomplicado",tags:["fresco","cítrico","aromático","energia","leve"]},
+      {icon:"🔥",label:"Poder e presença",sub:"Marcante, confiante, dominante",tags:["marcante","amadeirado","luxuoso","poder","noturno"]},
+      {icon:"🌹",label:"Sedução e romance",sub:"Sensual, envolvente, íntimo",tags:["sedutor","romântico","sensual","floral","oriental"]},
+      {icon:"🦋",label:"Elegância e sofisticação",sub:"Refinado, clean, atemporal",tags:["elegante","clean","sofisticado","diário","trabalho"]}
+    ]
+  },
+  {
+    eyebrow:"Seu momento",
+    text:"Qual imagem te faz sentir mais você?",
+    key:"imagem",
+    options:[
+      {icon:"🌊",label:"Vento e brisa do mar",sub:"Liberdade, verão, natureza",tags:["aquático","fresco","verão","cítrico","aromático","tropical","energia"]},
+      {icon:"🌃",label:"Cidade à noite",sub:"Sofisticação, mistério, estilo",tags:["noturno","marcante","elegante","sedutor","luxuoso","poder"]},
+      {icon:"🌺",label:"Jardim florido ao amanhecer",sub:"Delicadeza, frescor, beleza",tags:["floral","leve","romântico","primavera","feminino","sofisticado"]},
+      {icon:"🪵",label:"Floresta após a chuva",sub:"Terra, profundidade, força",tags:["amadeirado","chipre","sensual","oriental","marcante","poder"]}
+    ]
+  }
+];
+
+let current = 0, answers = {};
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation='none'; el.offsetHeight; el.style.animation='';
+}
+
+function startQuiz(){
+  current=0; answers={};
+  show('screen-quiz');
+  renderQ();
+}
+
+function prevQ(){
+  if(current===0){show('screen-intro');return;}
+  current--; renderQ();
+}
+
+function nextQ(){
+  const q=questions[current];
+  if(!answers[q.key]) return;
+  if(current<questions.length-1){current++;renderQ();}
+  else showResult();
+}
+
+function renderQ(){
+  const q=questions[current], total=questions.length;
+  const pct=Math.round((current/total)*100);
+  document.getElementById('prog-text').textContent=`Pergunta ${current+1} de ${total}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-eyebrow').textContent=q.eyebrow;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('btn-back').style.visibility=current===0?'hidden':'visible';
+  document.getElementById('next-label').textContent=current===total-1?'Ver resultado':'Próxima';
+  const container=document.getElementById('q-options');
+  container.innerHTML='';
+  const saved=answers[q.key];
+  q.options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option'+(saved&&saved.idx===i?' selected':'');
+    btn.innerHTML=`<span class="opt-dot"></span><span class="opt-icon">${opt.icon}</span><span class="opt-text"><span class="opt-label">${opt.label}</span>${opt.sub?`<span class="opt-sub">${opt.sub}</span>`:'' }</span>`;
+    btn.onclick=()=>selectOpt(i,opt,q.key);
+    container.appendChild(btn);
+  });
+  updateNextBtn();
+}
+
+function selectOpt(idx,opt,key){
+  answers[key]={idx,value:opt.value,tags:opt.tags||[]};
+  document.querySelectorAll('.option').forEach((b,i)=>b.className='option'+(i===idx?' selected':''));
+  updateNextBtn();
+}
+
+function updateNextBtn(){
+  const ready=!!answers[questions[current].key];
+  document.getElementById('btn-next').classList.toggle('ready',ready);
+}
+
+function showResult(){
+  const generoVal=(answers['genero']&&answers['genero'].value)||'all';
+  let candidatos=perfumes.filter(p=>generoVal==='all'||p.genero===generoVal||p.genero==='all');
+  const allTags=[];
+  Object.entries(answers).forEach(([k,r])=>{if(k!=='genero'&&r.tags)r.tags.forEach(t=>allTags.push(t));});
+  const scored=candidatos.map(p=>{
+    let score=0; allTags.forEach(t=>{if(p.tags.includes(t))score++;});
+    return{...p,score};
+  }).sort((a,b)=>b.score-a.score);
+  const w=scored[0];
+  const generoTag=w.genero==='him'?'For Him':w.genero==='her'?'For Her':'For All';
+  const precoHtml=w.p60
+    ?`<div class="result-price"><span class="price-label">A partir de</span><span class="price-val">R$ ${w.p100}</span><span class="price-alt">&nbsp;· ou R$ ${w.p60} em 60ml</span></div>`
+    :`<div class="result-price"><span class="price-label">A partir de</span><span class="price-val">R$ ${w.p100}</span></div>`;
+
+  document.getElementById('screen-result').innerHTML=`
+    <div class="result-header">
+      <div class="result-eyebrow">Sua fragrância ideal</div>
+      <h2 class="result-title"><em>${w.nome}</em></h2>
+      <p class="result-subtitle">Inspirado em ${w.inspirado}</p>
+    </div>
+    <div class="result-card">
+      <div class="result-img-wrap">
+        ${w.img
+          ? `<img class="result-img" src="${w.img}" alt="${w.nome}" onerror="this.style.display='none';this.parentElement.querySelector('.result-img-fallback').style.display='flex'">`
+          : ''
+        }
+        <div class="result-img-fallback" style="display:${w.img?'none':'flex'}">🌸</div>
+      </div>
+      <div class="result-body">
+        <div class="result-tags">
+          <span class="tag dark">${generoTag}</span>
+          <span class="tag">${w.familia}</span>
+        </div>
+        <div class="result-name">${w.nome}</div>
+        <div class="result-inspired">Inspirado em ${w.inspirado}</div>
+        <div class="result-divider"></div>
+        <div class="result-notes-title">Notas &amp; Ocasião</div>
+        <div class="result-desc">${w.desc}</div>
+        ${precoHtml}
+        <a class="btn-buy" href="${w.link}" target="_blank">
+          Ver produto &amp; comprar
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="result-restart">
+      <button class="btn-ghost" onclick="startQuiz()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 2.5v4h-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 6.5A6 6 0 1 1 10 2.08" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Refazer o quiz
+      </button>
+    </div>`;
+  show('screen-result');
+}
+</script>
+</body>
+</html>
